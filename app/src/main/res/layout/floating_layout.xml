@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <FrameLayout
+        android:id="@+id/float_icon_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        >
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="100dp">
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_launcher_background"
+                />
+
+        </androidx.cardview.widget.CardView>
+
+    </FrameLayout>
+    <RelativeLayout
+        android:id="@+id/meaninglayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp">
+
+
+
+
+<EditText
+    android:id="@+id/inputfield"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:textSize="15dp"
+    android:hint="Search word here"
+    />
+        <androidx.constraintlayout.utils.widget.MotionButton
+            android:id="@+id/search"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/inputfield"
+            android:text="Search"
+            android:textAllCaps="false"
+            android:background="@color/purple_200"
+
+            />
+<View
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="@color/gray_divider"
+    android:layout_below="@id/search"
+    android:layout_marginTop="10dp"
+    android:id="@+id/divider"
+    />
+        <TextView
+            android:id="@+id/tv_meaning"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/divider"
+            android:text="British English: stupid /ˈstjuːpɪd/ ADJECTIVE. If you say that someone or something is stupid, you mean that they show a lack of good judgement or intelligence and they are not at all sensible."
+
+            />
+    </RelativeLayout>
+
+</RelativeLayout>
