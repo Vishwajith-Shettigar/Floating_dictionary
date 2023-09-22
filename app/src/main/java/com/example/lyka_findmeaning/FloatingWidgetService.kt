@@ -13,6 +13,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
@@ -27,7 +28,7 @@ class FloatingWidgetService : Service() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun onCreate() {
+    override fun onCreate(){
         super.onCreate()
         flotingview = LayoutInflater.from(this).inflate(R.layout.floating_layout, null)
 
@@ -47,26 +48,18 @@ class FloatingWidgetService : Service() {
 
         val parent_view=flotingview.findViewById<RelativeLayout>(R.id.parent_view)
         val parent_cardview=flotingview.findViewById<CardView>(R.id.parent_cardview)
-
-        parent_view.setOnClickListener {
-Log.e("#","clicked")
-            parent_cardview.radius=0f
-           val float_icon_parent=flotingview.findViewById<FrameLayout>(R.id.float_icon_parent)
-            float_icon_parent.visibility=View.GONE
-
-            val meaninglayout=flotingview.findViewById<RelativeLayout>(R.id.meaninglayout)
-            meaninglayout.visibility=View.VISIBLE
+        val closebtn=flotingview.findViewById<ImageView>(R.id.closebtn)
+        val float_icon_parent=flotingview.findViewById<FrameLayout>(R.id.float_icon_parent)
+        val meaninglayout=flotingview.findViewById<RelativeLayout>(R.id.meaninglayout)
 
 
+       parent_cardview.setOnTouchListener { view, event ->
 
-
-        }
-        parent_cardview.setOnTouchListener { view, event ->
             Log.e("#","touch")
-            var initialX =params.x
-            var initialY = params.y
-            var initialTouchX = params.x.toFloat()
-            var initialTouchY = params.y.toFloat()
+            var initialX =0
+            var initialY = 0
+            var initialTouchX = 0f
+            var initialTouchY =0f
 
 
 
@@ -76,29 +69,48 @@ Log.e("#","clicked")
                     initialY = params.y
                     initialTouchX = event.getRawX();
                     initialTouchY = event.getRawY();
-                    return@setOnTouchListener true
+                    return@setOnTouchListener false
                 }
 
                 MotionEvent.ACTION_UP -> {//when the drag is ended switching the state of the widget
 
-                    return@setOnTouchListener true
+                    return@setOnTouchListener false
                 }
 
                 MotionEvent.ACTION_MOVE -> {//this code is helping the widget to move around the screen with fingers
                     params.x = (initialX + (event.getRawX() - initialTouchX)).toInt();
                     params.y = (initialY + (event.getRawY() - initialTouchY)).toInt();
                     windowManager!!.updateViewLayout(flotingview, params);
-                    return@setOnTouchListener true
-                }
-
-                else -> {
                     return@setOnTouchListener false
                 }
+
+
             }
 return@setOnTouchListener  false
+
+
         }
 
 
+
+        parent_cardview.setOnClickListener {
+            Log.e("#","clicked")
+            parent_cardview.radius=0f
+            float_icon_parent.visibility=View.GONE
+
+            meaninglayout.visibility=View.VISIBLE
+
+
+
+
+        }
+
+        closebtn.setOnClickListener {
+            parent_cardview.radius=100f
+            float_icon_parent.visibility=View.VISIBLE
+
+            meaninglayout.visibility=View.GONE
+        }
 
 
 

@@ -43,10 +43,17 @@ app:cardCornerRadius="100dp"
         android:layout_margin="10dp"
         android:visibility="gone">
 
-
+<ImageView
+    android:id="@+id/closebtn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:src="@drawable/baseline_close_24"
+    android:layout_alignParentEnd="true"
+    />
 
 
 <EditText
+    android:layout_below="@id/closebtn"
     android:id="@+id/inputfield"
     android:layout_width="match_parent"
     android:layout_height="60dp"
