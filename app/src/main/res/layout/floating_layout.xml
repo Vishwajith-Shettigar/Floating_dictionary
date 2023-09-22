@@ -59,6 +59,9 @@ app:cardCornerRadius="100dp"
     android:layout_height="60dp"
     android:textSize="15dp"
     android:hint="Search word here"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+
 
     />
         <androidx.constraintlayout.utils.widget.MotionButton

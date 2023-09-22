@@ -12,6 +12,8 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -38,7 +40,7 @@ class FloatingWidgetService : Service() {
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY, // Requires SYSTEM_ALERT_WINDOW permission
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            0,
             0
         )
         windowManager?.addView(flotingview, params)
@@ -51,45 +53,93 @@ class FloatingWidgetService : Service() {
         val closebtn=flotingview.findViewById<ImageView>(R.id.closebtn)
         val float_icon_parent=flotingview.findViewById<FrameLayout>(R.id.float_icon_parent)
         val meaninglayout=flotingview.findViewById<RelativeLayout>(R.id.meaninglayout)
+        val inputfield=flotingview.findViewById<EditText>(R.id.inputfield)
 
 
-       parent_cardview.setOnTouchListener { view, event ->
+//       parent_cardview.setOnTouchListener { view, event ->
+//
+//            Log.e("#","touch")
+//             var initialX=params.x
+//            var initialY=params.y
+//            var initialTouchX=event.rawX
+//            var initialTouchY=event.rawY
+//
+//
+//
+//            when (event.getAction()) {
+//                MotionEvent.ACTION_DOWN -> {
+//                    initialX = params.x
+//                    initialY = params.y
+//                    initialTouchX = event.getRawX();
+//                    initialTouchY = event.getRawY();
+//                    return@setOnTouchListener false
+//                }
+//
+//                MotionEvent.ACTION_UP -> {//when the drag is ended switching the state of the widget
+//
+//                    return@setOnTouchListener false
+//                }
+//
+//                MotionEvent.ACTION_MOVE -> {//this code is helping the widget to move around the screen with fingers
+//
+//                    Log.e("#","move")
+//                    params.x = initialX +  (event.getRawX() - initialTouchX).toInt()
+//                    params.y = initialY +  (event.getRawY() - initialTouchY).toInt()
+//                    windowManager!!.updateViewLayout(flotingview, params)
+//                    return@setOnTouchListener false
+//                }
+//
+//
+//            }
+//return@setOnTouchListener  false
+//
+//
+//        }
 
-            Log.e("#","touch")
-            var initialX =0
-            var initialY = 0
-            var initialTouchX = 0f
-            var initialTouchY =0f
+        var initialX = 0
+        var initialY = 0
+        var initialTouchX = 0f
+        var initialTouchY = 0f
 
-
-
-            when (event.getAction()) {
+        parent_cardview.setOnTouchListener { view, event ->
+            when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    // Capture the initial X and Y coordinates
                     initialX = params.x
                     initialY = params.y
-                    initialTouchX = event.getRawX();
-                    initialTouchY = event.getRawY();
-                    return@setOnTouchListener false
+
+                    // Capture the initial touch point
+                    initialTouchX = event.rawX
+                    initialTouchY = event.rawY
+
+                    return@setOnTouchListener false // Return true to consume the event
                 }
 
-                MotionEvent.ACTION_UP -> {//when the drag is ended switching the state of the widget
-
-                    return@setOnTouchListener false
+                MotionEvent.ACTION_UP -> {
+                    // Handle touch up event if needed
+                    return@setOnTouchListener false // Return true to consume the event
                 }
 
-                MotionEvent.ACTION_MOVE -> {//this code is helping the widget to move around the screen with fingers
-                    params.x = (initialX + (event.getRawX() - initialTouchX)).toInt();
-                    params.y = (initialY + (event.getRawY() - initialTouchY)).toInt();
-                    windowManager!!.updateViewLayout(flotingview, params);
-                    return@setOnTouchListener false
+                MotionEvent.ACTION_MOVE -> {
+                    // Calculate the new X and Y positions based on the initial positions
+                    params.x = initialX + (event.rawX - initialTouchX).toInt()
+                    params.y = initialY + (event.rawY - initialTouchY).toInt()
+
+                    // Update the view's position
+                    windowManager!!.updateViewLayout(flotingview, params)
+
+                    return@setOnTouchListener false // Return true to consume the event
                 }
 
-
+                else -> {
+                    return@setOnTouchListener false
+                }
             }
-return@setOnTouchListener  false
-
-
+            return@setOnTouchListener false
         }
+
+
+
 
 
 
@@ -99,8 +149,22 @@ return@setOnTouchListener  false
             float_icon_parent.visibility=View.GONE
 
             meaninglayout.visibility=View.VISIBLE
+            inputfield.requestFocus()
+
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(inputfield, InputMethodManager.SHOW_IMPLICIT)
 
 
+
+        }
+        inputfield.setOnClickListener {
+           Log.e("#","edit text")
+            it.requestFocus()
+            it.isFocusable=true
+            it.isFocusableInTouchMode=true
+
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(it, InputMethodManager.SHOW_IMPLICIT)
 
 
         }
