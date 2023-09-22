@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/parent_cardview"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+
+app:cardCornerRadius="100dp"
     >
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/parent_view"
+        >
+
+
 
     <FrameLayout
         android:id="@+id/float_icon_parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         >
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:cardCornerRadius="100dp">
+
             <ImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
@@ -26,9 +38,10 @@
     </FrameLayout>
     <RelativeLayout
         android:id="@+id/meaninglayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:visibility="gone">
 
 
 
@@ -39,6 +52,7 @@
     android:layout_height="60dp"
     android:textSize="15dp"
     android:hint="Search word here"
+
     />
         <androidx.constraintlayout.utils.widget.MotionButton
             android:id="@+id/search"
@@ -68,5 +82,5 @@
 
             />
     </RelativeLayout>
-
-</RelativeLayout>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
