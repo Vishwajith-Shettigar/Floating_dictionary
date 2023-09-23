@@ -4,13 +4,12 @@
     android:id="@+id/parent_cardview"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-
     app:cardCornerRadius="100dp">
 
     <RelativeLayout
         android:id="@+id/parent_view"
         android:layout_width="wrap_content"
-
+        android:background="@drawable/floating_icon_shape"
         android:layout_height="wrap_content">
 
 
@@ -38,8 +37,34 @@
             android:id="@+id/meaninglayout"
             android:layout_width="200sp"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:elevation="10dp"
             android:visibility="gone">
+            <LinearLayout
+                android:id="@+id/navigateparent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                >
+                <ImageView
+                    android:id="@+id/powerbtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/power_icon"
+                    android:layout_marginRight="10dp"/>
+
+                <ImageView
+                    android:id="@+id/homebtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/outline_home_24"
+                    android:layout_marginRight="10dp"/>
+
 
             <ImageView
                 android:id="@+id/closebtn"
@@ -48,12 +73,12 @@
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/baseline_close_24" />
 
-
+            </LinearLayout>
             <EditText
                 android:id="@+id/inputfield"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_below="@id/closebtn"
+                android:layout_below="@id/navigateparent"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:hint="Search word here"
@@ -67,8 +92,10 @@
                 android:layout_height="30dp"
                 android:layout_below="@+id/inputfield"
                 android:background="@color/purple_200"
+                android:gravity="center"
                 android:text="Search"
                 android:textAllCaps="false"
+
 
                 />
 

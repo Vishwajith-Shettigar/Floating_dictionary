@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="parentbackground">#000000</color>
+    <color name="strokecolor">#5A5656</color>
+</resources>

@@ -34,9 +34,7 @@ class FloatingWidgetService : Service() {
     override fun onCreate() {
         super.onCreate()
         flotingview = LayoutInflater.from(this).inflate(R.layout.floating_layout, null)
-
         windowManager = this.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-
         params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
@@ -44,8 +42,6 @@ class FloatingWidgetService : Service() {
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,     // Make it non-focusable
             PixelFormat.TRANSLUCENT
         )
-
-
         windowManager?.addView(flotingview, params)
 
         params!!.x = 0
@@ -57,11 +53,12 @@ class FloatingWidgetService : Service() {
         val float_icon_parent = flotingview.findViewById<FrameLayout>(R.id.float_icon_parent)
         val meaninglayout = flotingview.findViewById<RelativeLayout>(R.id.meaninglayout)
         val inputfield = flotingview.findViewById<EditText>(R.id.inputfield)
+        val powerbtn=flotingview.findViewById<ImageView>(R.id.powerbtn)
+        val homebtn=flotingview.findViewById<ImageView>(R.id.homebtn)
 
 
         inputfield.setOnClickListener {
             makeWidgetFocusable()
-
             it.isFocusable = true
             it.isFocusableInTouchMode = true
             it.requestFocus()
@@ -112,33 +109,33 @@ class FloatingWidgetService : Service() {
             return@setOnTouchListener false
         }
 
-
-
-
-
-
         parent_cardview.setOnClickListener {
             Log.e("#", "clicked")
-            parent_cardview.radius = 10f
+            parent_cardview.radius = 15f
             float_icon_parent.visibility = View.GONE
-
             meaninglayout.visibility = View.VISIBLE
-
-
             makeWidgetNotFocusable()
-
-
         }
-
 
         closebtn.setOnClickListener {
             parent_cardview.radius = 100f
             float_icon_parent.visibility = View.VISIBLE
-
             meaninglayout.visibility = View.GONE
             makeWidgetNotFocusable()
         }
 
+        powerbtn.setOnClickListener {
+            Log.e("#","stop service")
+            val stopServiceIntent = Intent(this, FloatingWidgetService::class.java)
+            stopService(stopServiceIntent)
+        }
+
+        homebtn.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            startActivity(intent)
+        }
 
     }
 
@@ -169,12 +166,17 @@ class FloatingWidgetService : Service() {
         params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY, // Requires SYSTEM_ALERT_WINDOW permission
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,     // Make it non-focusable
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
         )
         params!!.x=x
         params!!.y=y
         windowManager!!.updateViewLayout(flotingview, params)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (flotingview != null) windowManager!!.removeView(flotingview);
     }
 }

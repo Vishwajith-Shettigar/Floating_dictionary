@@ -9,4 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gray_divider">#E9E2E2</color>
 
+    <color name="parentbackground">#FFFFFFFF</color>
+    <color name="strokecolor">#B8B3B3</color>
+
 </resources>
