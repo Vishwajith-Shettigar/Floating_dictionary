@@ -1,96 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-  android:id="@+id/parent_cardview"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent_cardview"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
 
-app:cardCornerRadius="100dp"
-    >
+    app:cardCornerRadius="100dp">
+
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
         android:id="@+id/parent_view"
-        >
-
-
-
-    <FrameLayout
-        android:id="@+id/float_icon_parent"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        >
-        <androidx.cardview.widget.CardView
+
+        android:layout_height="wrap_content">
+
+
+        <FrameLayout
+            android:id="@+id/float_icon_parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="100dp">
+            android:visibility="visible">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="100dp">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_launcher_background" />
+
+            </androidx.cardview.widget.CardView>
+
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/meaninglayout"
+            android:layout_width="200sp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:visibility="gone">
 
             <ImageView
-                android:layout_width="60dp"
+                android:id="@+id/closebtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/baseline_close_24" />
+
+
+            <EditText
+                android:id="@+id/inputfield"
+                android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:src="@drawable/ic_launcher_background"
+                android:layout_below="@id/closebtn"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:hint="Search word here"
+                android:textSize="15dp"
+
                 />
 
-        </androidx.cardview.widget.CardView>
+            <androidx.constraintlayout.utils.widget.MotionButton
+                android:id="@+id/search"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/inputfield"
+                android:background="@color/purple_200"
+                android:text="Search"
+                android:textAllCaps="false"
 
-    </FrameLayout>
-    <RelativeLayout
-        android:id="@+id/meaninglayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:visibility="gone">
+                />
 
-<ImageView
-    android:id="@+id/closebtn"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:src="@drawable/baseline_close_24"
-    android:layout_alignParentEnd="true"
-    />
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/search"
+                android:layout_marginTop="10dp"
+                android:background="@color/gray_divider" />
 
+            <TextView
+                android:id="@+id/tv_meaning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/divider"
+                android:layout_marginTop="10dp"
+                android:text="British English: stupid /ˈstjuːpɪd/ ADJECTIVE. If you say that someone or something is stupid, you mean that they show a lack of good judgement or intelligence and they are not at all sensible."
 
-<EditText
-    android:layout_below="@id/closebtn"
-    android:id="@+id/inputfield"
-    android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:textSize="15dp"
-    android:hint="Search word here"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-
-
-    />
-        <androidx.constraintlayout.utils.widget.MotionButton
-            android:id="@+id/search"
-            android:layout_width="80dp"
-            android:layout_height="30dp"
-            android:layout_below="@+id/inputfield"
-            android:text="Search"
-            android:textAllCaps="false"
-            android:background="@color/purple_200"
-
-            />
-<View
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:background="@color/gray_divider"
-    android:layout_below="@id/search"
-    android:layout_marginTop="10dp"
-    android:id="@+id/divider"
-    />
-        <TextView
-            android:id="@+id/tv_meaning"
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/divider"
-            android:text="British English: stupid /ˈstjuːpɪd/ ADJECTIVE. If you say that someone or something is stupid, you mean that they show a lack of good judgement or intelligence and they are not at all sensible."
-
-            />
-    </RelativeLayout>
+                />
+        </RelativeLayout>
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
