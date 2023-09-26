@@ -1,7 +1,6 @@
 package com.example.lyka_findmeaning
 
 import android.app.Service
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
@@ -19,13 +18,31 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.utils.widget.MotionButton
+import com.example.lyka_findmeaning.data.word
+import com.example.lyka_findmeaning.repository.Getmeaningrepository
+import com.example.lyka_findmeaning.util.Resource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
 
 class FloatingWidgetService : Service() {
+
+
+
     private lateinit var flotingview: View
     private lateinit var expandview: View
     private lateinit var collapse: View
     private var windowManager: WindowManager? = null
     var params: WindowManager.LayoutParams? = null
+    private val _meaning = MutableStateFlow<Resource<word>>(Resource.Notspecified())
+    val meaning = _meaning.asStateFlow()
+    private val respository by lazy {
+        Getmeaningrepository()
+    }
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
@@ -33,19 +50,24 @@ class FloatingWidgetService : Service() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
+
+
+
         flotingview = LayoutInflater.from(this).inflate(R.layout.floating_layout, null)
         windowManager = this.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY, // Requires SYSTEM_ALERT_WINDOW permission
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,     // Make it non-focusable
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
         )
         windowManager?.addView(flotingview, params)
 
         params!!.x = 0
         params!!.y = 0
+
+
 
         val parent_view = flotingview.findViewById<RelativeLayout>(R.id.parent_view)
         val parent_cardview = flotingview.findViewById<CardView>(R.id.parent_cardview)
@@ -55,6 +77,8 @@ class FloatingWidgetService : Service() {
         val inputfield = flotingview.findViewById<EditText>(R.id.inputfield)
         val powerbtn=flotingview.findViewById<ImageView>(R.id.powerbtn)
         val homebtn=flotingview.findViewById<ImageView>(R.id.homebtn)
+        val searchbtn=flotingview.findViewById<MotionButton>(R.id.search)
+
 
 
         inputfield.setOnClickListener {
@@ -66,6 +90,41 @@ class FloatingWidgetService : Service() {
             imm.showSoftInput(inputfield, InputMethodManager.SHOW_IMPLICIT)
 
         }
+
+        searchbtn.setOnClickListener {
+
+            GlobalScope.launch{
+             _meaning.emit(Resource.Loading())
+
+            }
+            val word=inputfield.text.toString().trim()
+            Log.e("#",word)
+            GlobalScope.launch(Dispatchers.IO) {
+                val res=respository.getMeaning(word,object :Getmeaningcallback{
+                    override fun onSuccess(word: word?) {
+                        GlobalScope.launch {
+                            _meaning.emit(Resource.Success(word!!))
+
+                        }
+                            Log.e("#", word?.meanings?.get(0)?.definitions?.get(0)?.definition.toString())
+                    }
+
+                    override fun onError(errorMessage: String) {
+                        TODO("Not yet implemented")
+                        GlobalScope.launch {
+                            _meaning.emit(Resource.Error(errorMessage))
+
+                        }
+                    }
+
+                })
+
+
+            }
+
+
+        }
+
 
         var initialX = 0
         var initialY = 0

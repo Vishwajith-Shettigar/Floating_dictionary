@@ -10,13 +10,18 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.lyka_findmeaning.databinding.ActivityMainBinding
+import com.example.lyka_findmeaning.viewmodel.Getmeaningviewmodel
+import dagger.hilt.android.AndroidEntryPoint
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding;
     val SYSTEM_ALERT_WINDOW_PERMISSION_REQUEST_CODE = 101
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
