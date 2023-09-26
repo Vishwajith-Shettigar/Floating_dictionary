@@ -5,32 +5,38 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.utils.widget.MotionButton
+import androidx.lifecycle.LifecycleCoroutineScope
 import com.example.lyka_findmeaning.data.word
 import com.example.lyka_findmeaning.repository.Getmeaningrepository
 import com.example.lyka_findmeaning.util.Resource
+import com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
 class FloatingWidgetService : Service() {
-
 
 
     private lateinit var flotingview: View
@@ -40,9 +46,22 @@ class FloatingWidgetService : Service() {
     var params: WindowManager.LayoutParams? = null
     private val _meaning = MutableStateFlow<Resource<word>>(Resource.Notspecified())
     val meaning = _meaning.asStateFlow()
+
+   lateinit var parent_view:View
+   lateinit var parent_cardview :View
+  lateinit  var float_icon_parent :View
+   lateinit var meaninglayout:View
+  lateinit  var inputfield:EditText
+  lateinit  var powerbtn :View
+  lateinit  var homebtn :View
+   lateinit var searchbtn: CircularProgressButton
+   lateinit var closebtn:View
+   lateinit var tv_meaning:TextView
+
     private val respository by lazy {
         Getmeaningrepository()
     }
+
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
@@ -54,6 +73,8 @@ class FloatingWidgetService : Service() {
 
 
         flotingview = LayoutInflater.from(this).inflate(R.layout.floating_layout, null)
+
+
         windowManager = this.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
@@ -67,19 +88,19 @@ class FloatingWidgetService : Service() {
         params!!.x = 0
         params!!.y = 0
 
+        parent_cardview = flotingview.findViewById<CardView>(R.id.parent_cardview)
+        closebtn = flotingview.findViewById<ImageView>(R.id.closebtn)
+        float_icon_parent = flotingview.findViewById<FrameLayout>(R.id.float_icon_parent)
+        parent_view = flotingview.findViewById<RelativeLayout>(R.id.parent_view)
+        meaninglayout = flotingview.findViewById<RelativeLayout>(R.id.meaninglayout)
+        inputfield = flotingview.findViewById<EditText>(R.id.inputfield)
+        powerbtn = flotingview.findViewById<ImageView>(R.id.powerbtn)
+        homebtn = flotingview.findViewById<ImageView>(R.id.homebtn)
+        searchbtn = flotingview.findViewById<CircularProgressButton>(R.id.search)
+        tv_meaning = flotingview.findViewById<TextView>(R.id.tv_meaning)
 
 
-        val parent_view = flotingview.findViewById<RelativeLayout>(R.id.parent_view)
-        val parent_cardview = flotingview.findViewById<CardView>(R.id.parent_cardview)
-        val closebtn = flotingview.findViewById<ImageView>(R.id.closebtn)
-        val float_icon_parent = flotingview.findViewById<FrameLayout>(R.id.float_icon_parent)
-        val meaninglayout = flotingview.findViewById<RelativeLayout>(R.id.meaninglayout)
-        val inputfield = flotingview.findViewById<EditText>(R.id.inputfield)
-        val powerbtn=flotingview.findViewById<ImageView>(R.id.powerbtn)
-        val homebtn=flotingview.findViewById<ImageView>(R.id.homebtn)
-        val searchbtn=flotingview.findViewById<MotionButton>(R.id.search)
-
-
+emptyText()
 
         inputfield.setOnClickListener {
             makeWidgetFocusable()
@@ -91,22 +112,49 @@ class FloatingWidgetService : Service() {
 
         }
 
+        GlobalScope.launch {
+            meaning.collectLatest {
+                when (it) {
+                    is Resource.Loading -> {
+                        emptyText()
+                        showLoading()
+                    }
+                    is Resource.Success -> {
+                        stopLoading()
+                        showMeaning(it.data)
+                    }
+                    is Resource.Error -> {
+                        stopLoading()
+                        emptyText()
+                        showError()
+
+                    }
+                    else -> {
+                        Unit
+                    }
+                }
+            }
+        }
+
         searchbtn.setOnClickListener {
 
-            GlobalScope.launch{
-             _meaning.emit(Resource.Loading())
+            GlobalScope.launch {
+                _meaning.emit(Resource.Loading())
 
             }
-            val word=inputfield.text.toString().trim()
-            Log.e("#",word)
+            val word = (inputfield as EditText?)?.text.toString().trim()
+            Log.e("#", word)
             GlobalScope.launch(Dispatchers.IO) {
-                val res=respository.getMeaning(word,object :Getmeaningcallback{
+                val res = respository.getMeaning(word, object : Getmeaningcallback {
                     override fun onSuccess(word: word?) {
+
                         GlobalScope.launch {
                             _meaning.emit(Resource.Success(word!!))
-
                         }
-                            Log.e("#", word?.meanings?.get(0)?.definitions?.get(0)?.definition.toString())
+                        Log.e(
+                            "#",
+                            word?.meanings?.get(0)?.definitions?.get(0)?.definition.toString()
+                        )
                     }
 
                     override fun onError(errorMessage: String) {
@@ -170,21 +218,21 @@ class FloatingWidgetService : Service() {
 
         parent_cardview.setOnClickListener {
             Log.e("#", "clicked")
-            parent_cardview.radius = 15f
+            (parent_cardview as CardView?)?.radius  = 15f
             float_icon_parent.visibility = View.GONE
             meaninglayout.visibility = View.VISIBLE
             makeWidgetNotFocusable()
         }
 
         closebtn.setOnClickListener {
-            parent_cardview.radius = 100f
+            (parent_cardview as CardView?)?.radius= 100f
             float_icon_parent.visibility = View.VISIBLE
             meaninglayout.visibility = View.GONE
             makeWidgetNotFocusable()
         }
 
         powerbtn.setOnClickListener {
-            Log.e("#","stop service")
+            Log.e("#", "stop service")
             val stopServiceIntent = Intent(this, FloatingWidgetService::class.java)
             stopService(stopServiceIntent)
         }
@@ -198,6 +246,49 @@ class FloatingWidgetService : Service() {
 
     }
 
+    private fun emptyText() {
+        val mainHandler = Handler(Looper.getMainLooper())
+        mainHandler.post {
+            tv_meaning.visibility = View.GONE
+        }
+    }
+
+    private fun showError() {
+
+    }
+
+    private fun showMeaning(data: word?) {
+        val mainHandler = Handler(Looper.getMainLooper())
+        mainHandler.post {
+            tv_meaning.visibility = View.VISIBLE
+            val input = data?.meanings?.get(0)?.definitions?.get(0)?.definition + "\n" +
+                    data?.meanings?.get(0)?.definitions?.get(0)?.example
+            tv_meaning.text = (input.toString())
+        }
+
+    }
+
+    private fun stopLoading() {
+
+
+        val mainHandler = Handler(Looper.getMainLooper())
+        mainHandler.post {
+            searchbtn.revertAnimation()
+        }
+    }
+
+    private fun showLoading() {
+
+
+        val mainHandler = Handler(Looper.getMainLooper())
+        mainHandler.post {
+            searchbtn.startAnimation()
+        }
+
+
+
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return super.onStartCommand(intent, flags, startId)
         Log.e("#", "helllo")
@@ -205,8 +296,8 @@ class FloatingWidgetService : Service() {
     }
 
     fun makeWidgetFocusable() {
-        val x=params!!.x
-        val y=params!!.y
+        val x = params!!.x
+        val y = params!!.y
         params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
@@ -214,14 +305,14 @@ class FloatingWidgetService : Service() {
             0,     // Make it non-focusable
             PixelFormat.TRANSLUCENT
         )
-        params!!.x=x
-        params!!.y=y
+        params!!.x = x
+        params!!.y = y
         windowManager!!.updateViewLayout(flotingview, params)
     }
 
     fun makeWidgetNotFocusable() {
-        val x=params!!.x
-        val y=params!!.y
+        val x = params!!.x
+        val y = params!!.y
         params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
@@ -229,8 +320,8 @@ class FloatingWidgetService : Service() {
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
         )
-        params!!.x=x
-        params!!.y=y
+        params!!.x = x
+        params!!.y = y
         windowManager!!.updateViewLayout(flotingview, params)
     }
 

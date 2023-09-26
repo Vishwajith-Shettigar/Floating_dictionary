@@ -86,7 +86,7 @@
 
                 />
 
-            <androidx.constraintlayout.utils.widget.MotionButton
+            <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
                 android:id="@+id/search"
                 android:layout_width="80dp"
                 android:layout_height="30dp"

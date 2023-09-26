@@ -29,6 +29,8 @@ class Getmeaningrepository {
                     callbackl.onSuccess(result)
 
 
+                }else{
+                    callbackl.onError("error")
                 }
             }
 
