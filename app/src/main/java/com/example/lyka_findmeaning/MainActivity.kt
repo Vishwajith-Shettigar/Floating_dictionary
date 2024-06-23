@@ -38,13 +38,11 @@ class MainActivity : AppCompatActivity() {
                 showPermissiondialog()
 
             } else {
-                Log.e("#", "lol")
                 val intent = Intent(this, FloatingWidgetService::class.java)
                 startService(intent)
 
             }
         }
-
     }
 
     private fun hasSystemAlertWindowPermission(): Boolean {
@@ -59,7 +57,6 @@ class MainActivity : AppCompatActivity() {
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
             Uri.parse("package:$packageName")
         )
-
         startActivityForResult(intent, SYSTEM_ALERT_WINDOW_PERMISSION_REQUEST_CODE)
     }
 
@@ -77,6 +74,4 @@ class MainActivity : AppCompatActivity() {
 
         builder.show()
     }
-
-
 }
