@@ -16,37 +16,23 @@ class Getmeaningrepository {
     val apiservice = Retrofitinstance.retrofit.create(Apiservice::class.java)
 
     fun getMeaning(word: String, callbackl: Getmeaningcallback): word? {
-
         var result: word? = null
         val call: Call<List<word>> = apiservice.getMeaning(word)
         call.enqueue(object : retrofit2.Callback<List<word>>  {
-
             override fun onResponse(call: Call<List<word>> , response: Response<List<word>> ) {
-
                 if (response.isSuccessful) {
-
                     result =response.body()?.get(0)
                     callbackl.onSuccess(result)
-
-
                 }else{
                     callbackl.onError("error")
                 }
             }
 
             override fun onFailure(call: Call<List<word>> , t: Throwable) {
-                // Handle the network request failure
-                // You can access the exception in the 't' parameter
                 Log.e("#", t.message.toString())
                 callbackl.onError("error")
             }
         })
-
-
         return result
-
-
     }
-
 }
-
