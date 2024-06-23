@@ -13,16 +13,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class Getmeaningviewmodel : ViewModel() {
-
-
-
     fun fetchMeaning(word: String) {
-        viewModelScope.launch {
 
-        }
-        viewModelScope.launch {
-
-        }
     }
 
 }
