@@ -37,8 +37,6 @@ import kotlinx.coroutines.launch
 
 
 class FloatingWidgetService : Service() {
-
-
     private lateinit var flotingview: View
     private lateinit var expandview: View
     private lateinit var collapse: View
@@ -46,7 +44,6 @@ class FloatingWidgetService : Service() {
     var params: WindowManager.LayoutParams? = null
     private val _meaning = MutableStateFlow<Resource<word>>(Resource.Notspecified())
     val meaning = _meaning.asStateFlow()
-
    lateinit var parent_view:View
    lateinit var parent_cardview :View
   lateinit  var float_icon_parent :View
@@ -70,10 +67,7 @@ class FloatingWidgetService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-
-
         flotingview = LayoutInflater.from(this).inflate(R.layout.floating_layout, null)
-
 
         windowManager = this.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         params = WindowManager.LayoutParams(
@@ -100,7 +94,7 @@ class FloatingWidgetService : Service() {
         tv_meaning = flotingview.findViewById<TextView>(R.id.tv_meaning)
 
 
-emptyText()
+         emptyText()
 
         inputfield.setOnClickListener {
             makeWidgetFocusable()
@@ -143,7 +137,6 @@ emptyText()
 
             }
             val word = (inputfield as EditText?)?.text.toString().trim()
-            Log.e("#", word)
             GlobalScope.launch(Dispatchers.IO) {
                 val res = respository.getMeaning(word, object : Getmeaningcallback {
                     override fun onSuccess(word: word?) {
@@ -151,14 +144,9 @@ emptyText()
                         GlobalScope.launch {
                             _meaning.emit(Resource.Success(word!!))
                         }
-                        Log.e(
-                            "#",
-                            word?.meanings?.get(0)?.definitions?.get(0)?.definition.toString()
-                        )
                     }
 
                     override fun onError(errorMessage: String) {
-                        TODO("Not yet implemented")
                         GlobalScope.launch {
                             _meaning.emit(Resource.Error(errorMessage))
 
@@ -166,13 +154,8 @@ emptyText()
                     }
 
                 })
-
-
             }
-
-
         }
-
 
         var initialX = 0
         var initialY = 0
@@ -232,7 +215,6 @@ emptyText()
         }
 
         powerbtn.setOnClickListener {
-            Log.e("#", "stop service")
             val stopServiceIntent = Intent(this, FloatingWidgetService::class.java)
             stopService(stopServiceIntent)
         }
@@ -270,7 +252,6 @@ emptyText()
 
     private fun stopLoading() {
 
-
         val mainHandler = Handler(Looper.getMainLooper())
         mainHandler.post {
             searchbtn.revertAnimation()
@@ -279,19 +260,14 @@ emptyText()
 
     private fun showLoading() {
 
-
         val mainHandler = Handler(Looper.getMainLooper())
         mainHandler.post {
             searchbtn.startAnimation()
         }
-
-
-
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return super.onStartCommand(intent, flags, startId)
-        Log.e("#", "helllo")
         return START_STICKY
     }
 
